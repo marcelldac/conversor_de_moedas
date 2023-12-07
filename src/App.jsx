@@ -52,6 +52,7 @@ function App() {
         onChange={(e) => setSelectedCurrency(e.target.value)}
       >
         {coinData &&
+          // eslint-disable-next-line no-unused-vars
           Object.entries(coinData).map(([currency, index]) => (
             <option key={currency} value={currency}>
               {currency}
