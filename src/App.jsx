@@ -7,7 +7,7 @@ import {
   SmileOutlined,
   TransactionOutlined,
 } from "@ant-design/icons";
-import { HALF_SECOND } from "./constants";
+import { GITHUB, HALF_SECOND, LINKEDIN } from "./constants";
 
 function App() {
   const [coinData, setCoinData] = useState({});
@@ -89,8 +89,8 @@ function App() {
         </Button>
         {convertedAmount && (
           <Title
-            type="success"
             level={5}
+            style={{ color: "blue" }}
             copyable={{ text: convertedAmount.toFixed(2) }}
           >
             Valor convertido: ${convertedAmount.toFixed(2)} {selectedCurrency}
@@ -103,8 +103,8 @@ function App() {
         style={{ right: 24 }}
         icon={<SmileOutlined />}
       >
-        <FloatButton icon={<LinkedinOutlined />} />
-        <FloatButton icon={<GithubOutlined />} />
+        <FloatButton icon={<LinkedinOutlined />} href={LINKEDIN} />
+        <FloatButton icon={<GithubOutlined />} href={GITHUB} />
       </FloatButton.Group>
     </>
   );
