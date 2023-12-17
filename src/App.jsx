@@ -1,11 +1,21 @@
 import "./App.css";
 import { useEffect, useState } from "react";
+import { Button, Flex, FloatButton, Input, Typography } from "antd";
+import {
+  GithubOutlined,
+  LinkedinOutlined,
+  SmileOutlined,
+  TransactionOutlined,
+} from "@ant-design/icons";
+import { HALF_SECOND } from "./constants";
 
 function App() {
   const [coinData, setCoinData] = useState({});
   const [selectedCurrency, setSelectedCurrency] = useState("USD");
   const [USDValue, setUSDValue] = useState();
   const [convertedAmount, setConvertedAmount] = useState();
+  const [isLoading, setIsLoading] = useState(false);
+  const { Title } = Typography;
 
   const fetchData = async () => {
     try {
@@ -20,8 +30,14 @@ function App() {
     }
   };
 
-  const handleSubmit = (event) => {
+  const delay = (milliseconds) => {
+    return new Promise((resolve) => setTimeout(resolve, milliseconds));
+  };
+
+  const handleSubmit = async (event) => {
     event.preventDefault();
+    setIsLoading(true);
+    await delay(HALF_SECOND);
     const usdInput = parseFloat(USDValue);
     const conversionRate = parseFloat(coinData[selectedCurrency]);
 
@@ -32,6 +48,7 @@ function App() {
 
     const convertedCurrency = usdInput * conversionRate;
     setConvertedAmount(convertedCurrency);
+    setIsLoading(false);
   };
 
   useEffect(() => {
@@ -39,33 +56,57 @@ function App() {
   }, []);
 
   return (
-    <form onSubmit={handleSubmit} className="container">
-      <input
-        type="text"
-        placeholder="Digite o valor em USD"
-        onChange={(e) => setUSDValue(e.target.value)}
-      />
-      <select
-        name="coinlist"
-        id="coinlist"
-        value={selectedCurrency}
-        onChange={(e) => setSelectedCurrency(e.target.value)}
+    <>
+      <form onSubmit={handleSubmit} className="container">
+        <Flex>
+          <Input
+            type="text"
+            placeholder="Digite o valor em Dolar."
+            onChange={(e) => setUSDValue(e.target.value)}
+          />
+          <select
+            name="coinlist"
+            id="coinlist"
+            value={selectedCurrency}
+            onChange={(e) => setSelectedCurrency(e.target.value)}
+          >
+            {coinData &&
+              Object.entries(coinData).map(([currency]) => (
+                <option key={currency} value={currency}>
+                  {currency}
+                </option>
+              ))}
+          </select>
+        </Flex>
+        <Button
+          htmlType="submit"
+          type="primary"
+          icon={<TransactionOutlined />}
+          size="middle"
+          loading={isLoading}
+        >
+          Converter
+        </Button>
+        {convertedAmount && (
+          <Title
+            type="success"
+            level={5}
+            copyable={{ text: convertedAmount.toFixed(2) }}
+          >
+            Valor convertido: ${convertedAmount.toFixed(2)} {selectedCurrency}
+          </Title>
+        )}
+      </form>
+      <FloatButton.Group
+        trigger="hover"
+        type="primary"
+        style={{ right: 24 }}
+        icon={<SmileOutlined />}
       >
-        {coinData &&
-          // eslint-disable-next-line no-unused-vars
-          Object.entries(coinData).map(([currency, index]) => (
-            <option key={currency} value={currency}>
-              {currency}
-            </option>
-          ))}
-      </select>
-      <button type="submit">Enviar</button>
-      {convertedAmount && (
-        <p>
-          Converted amount: {convertedAmount.toFixed(2)} {selectedCurrency}
-        </p>
-      )}
-    </form>
+        <FloatButton icon={<LinkedinOutlined />} />
+        <FloatButton icon={<GithubOutlined />} />
+      </FloatButton.Group>
+    </>
   );
 }
 
